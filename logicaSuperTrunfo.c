@@ -1,18 +1,33 @@
 #include <stdio.h>
 
 /* 
-! 🏅 Nível Aventureiro
+! 🏅 Nível Mestre
 
-No nível Aventureiro, você expandirá o sistema para incluir a comparação aninhada e a criação de um menu interativo usando `switch`.
+No nível Mestre, o desafio se intensifica com a adição de funcionalidades avançadas, como menus dinâmicos e lógica de decisão complexa com operadores ternários.
 
-! 🆕 Diferença em relação ao Nível Novato:
-* Menu Interativo:** O usuário poderá escolher diferentes atributos para comparação através de um menu.
-* Comparação Aninhada:** Implementação de lógica de comparação mais complexa, utilizando estruturas aninhadas para tomar decisões baseadas em múltiplos atributos.
+! 🆕 Diferença em relação ao Nível Aventureiro:
+* Escolha de Dois Atributos:** O usuário poderá escolher dois atributos para comparação entre as cartas.
+* Lógica de Decisão Complexa:** Implementação de estruturas de decisão aninhadas e encadeadas, além do uso de operadores ternários para determinar a carta vencedora.
+* Menus Dinâmicos:** Os menus serão dinâmicos, permitindo uma navegação fluida entre as opções de comparação.
 
 ! 🚩 Novas Funcionalidades:
-* Cadastro de Cartas:** Similar ao nível Novato, com a adição de comparação de múltiplos atributos.
-* Menu Interativo:** Uso de `switch` para criar um menu que permite ao jogador escolher os atributos a serem comparados.
-* Exibição de Resultados:** O sistema exibirá o resultado da comparação, indicando qual carta venceu e qual atributo foi utilizado.
+* Comparação de Dois Atributos:** O sistema comparará dois atributos simultaneamente para determinar a carta vencedora.
+* Lógica Avançada:** Uso de operadores ternários e lógica aninhada para lidar com comparações complexas.
+* Empates:** O sistema será capaz de lidar com empates, exibindo mensagens apropriadas.
+* Exibição de Resultados:** Exibição dos resultados das comparações de forma clara e interativa.
+
+---
+
+! 📋 Requisitos Funcionais Comuns
+* Cadastro de Cartas:** O sistema deve permitir o cadastro de cartas com as informações necessárias.
+* Comparação:** O sistema deve comparar as cartas e determinar a vencedora com base nas regras estabelecidas.
+* Exibição de Resultados:** Os resultados devem ser exibidos de forma clara, indicando a carta vencedora.
+
+! 📌 Requisitos Não Funcionais Comuns
+* Usabilidade:** A interface do usuário deve ser simples e intuitiva.
+* Performance:** O sistema deve executar operações sem atrasos perceptíveis.
+* Manutenibilidade:** O código deve ser bem estruturado e documentado.
+* Confiabilidade:** O sistema deve ser robusto e capaz de lidar com entradas inválidas de forma adequada.
 
 */
 
@@ -21,7 +36,9 @@ int main()
     /* Declarando variaveis */
         
     // LIMITE
-    int CARTAS_MAX = 2;                             // Quantidade de cartas
+    int CARTAS_MAX = 2,                             // Quantidade de cartas
+        ATRIBUTOS_MAX = 2;
+
     
     // Chars
     char    estado[CARTAS_MAX][3],                  // Estado *Atualizado agora com 2 letras.
@@ -30,8 +47,8 @@ int main()
     
     // Ints
     unsigned int    numeroHabitantes[CARTAS_MAX],   // Numedo de habitantes
-                    opcao,
-                    vencedor;                     // Será usado na hora da comparação para dizer quem venceu
+                    opcao[ATRIBUTOS_MAX],
+                    vencedor[ATRIBUTOS_MAX];                     // Será usado na hora da comparação para dizer quem venceu
     int numeroPontosTuristicos[CARTAS_MAX];         // Numero de pontos turisticos
     
     // Floats
@@ -42,6 +59,7 @@ int main()
     pibPerCapta[CARTAS_MAX],                        // PIB per capta
     superPoder[CARTAS_MAX];                         // Super Poder soma de pop, area, PIB, PIB per capta e densidade pop invertida para comp e numeros de pontos turisticos.
     
+    double atributoSoma[ATRIBUTOS_MAX];
     
     /* Entrada de dados */
     
@@ -183,47 +201,90 @@ int main()
     printf("5- Densidade demográfica\n");
     printf("Escolha a opção: ");
 
-    scanf("%hd", &opcao);
+    scanf("%u", &opcao[0]);
 
     printf("\n\n");
 
+    /* Aqui ele já verifica qual já foi escolhido e não apresenta a opção!... */
+    printf("\nEscolha outro dos atributos para comparar: \n");
+    if(opcao[0] != 1) printf("1- População\n");
+    if(opcao[0] != 2) printf("2- Área\n");
+    if(opcao[0] != 3) printf("3- PIB\n");
+    if(opcao[0] != 4) printf("4- Numero de pontos turisticos\n");
+    if(opcao[0] != 5) printf("5- Densidade demográfica\n");
+    printf("Escolha a opção: ");
+
+    scanf("%u", &opcao[1]);
+
+    printf("\n\n");
+
+    // Tratamento de erros....
+    // Caso não atenda os requisitos o programa informa o que aconteceu e já para por aqui...
+
+    if( (opcao[0] == opcao[1]) )
+    {
+        printf("Você não pode escolher o mesmo atributo para comparar!\n\nSem GRAÇA!!\n");
+        return 0;
+    }
+    else if (   (opcao[0] < 0 && opcao[0] > 5) ||
+                (opcao[1] < 0 && opcao[1] > 5))
+    {
+        printf("Meu deuUUXX, esolheu alguma opção invalida!!!\n\nArrrrghh!!\n");
+        return 0;
+    }
+
+
     // Comparação entre caratas 
-    switch (opcao)
+
+    atributoSoma[0] = 0;
+    atributoSoma[1] = 0;
+
+    switch (opcao[0])
     {
     case 1:
         printf("Carta %d - %s (%s) população: %u\n",1,nomeCidade[0],estado[0],numeroHabitantes[0]);
-        printf("Carta %d - %s (%s) população: %u\n\n",2,nomeCidade[1],estado[1],numeroHabitantes[1]);
-        if (numeroHabitantes[0] == numeroHabitantes[1]) vencedor = 0;
-        else if (numeroHabitantes[0] > numeroHabitantes[1]) vencedor = 1; // Maior numero vence
-        else vencedor = 2;
+        printf("Carta %d - %s (%s) população: %u\n",2,nomeCidade[1],estado[1],numeroHabitantes[1]);
+        if (numeroHabitantes[0] == numeroHabitantes[1]) vencedor[0] = 0;
+        else if (numeroHabitantes[0] > numeroHabitantes[1]) vencedor[0] = 1; // Maior numero vence
+        else vencedor[0] = 2;
+        atributoSoma[0] += (double) numeroHabitantes[0];
+        atributoSoma[1] += (double) numeroHabitantes[1];
         break;
     case 2:
         printf("Carta %d - %s (%s) Área: %.2f\n",1,nomeCidade[0],estado[0],area[0]);
-        printf("Carta %d - %s (%s) Área: %.2f\n\n",2,nomeCidade[1],estado[1],area[1]);
-        if (area[0] == area[1]) vencedor = 0;
-        else if (area[0] > area[1]) vencedor = 1; // Maior numero vence
-        else vencedor = 2;
+        printf("Carta %d - %s (%s) Área: %.2f\n",2,nomeCidade[1],estado[1],area[1]);
+        if (area[0] == area[1]) vencedor[0] = 0;
+        else if (area[0] > area[1]) vencedor[0] = 1; // Maior numero vence
+        else vencedor[0] = 2;
+        atributoSoma[0] += (double) area[0];
+        atributoSoma[1] += (double) area[1];
         break;
     case 3:
         printf("Carta %d - %s (%s) PIB: %.2f\n",1,nomeCidade[0],estado[0],pib[0]);
-        printf("Carta %d - %s (%s) PIB: %.2f\n\n",2,nomeCidade[1],estado[1],pib[1]);
-        if (pib[0] == pib[1]) vencedor = 0;
-        else if (pib[0] > pib[1]) vencedor = 1; // Maior numero vence
-        else vencedor = 2;
+        printf("Carta %d - %s (%s) PIB: %.2f\n",2,nomeCidade[1],estado[1],pib[1]);
+        if (pib[0] == pib[1]) vencedor[0] = 0;
+        else if (pib[0] > pib[1]) vencedor[0] = 1; // Maior numero vence
+        else vencedor[0] = 2;
+        atributoSoma[0] += (double) pib[0];
+        atributoSoma[1] += (double) pib[1];
         break;
     case 4:
         printf("Carta %d - %s (%s) pontos turisticos: %d\n",1,nomeCidade[0],estado[0],numeroPontosTuristicos[0]);
-        printf("Carta %d - %s (%s) pontos turisticos: %d\n\n",2,nomeCidade[1],estado[1],numeroPontosTuristicos[1]);
-        if (numeroPontosTuristicos[0] == numeroPontosTuristicos[1]) vencedor = 0;
-        else if (numeroPontosTuristicos[0] > numeroPontosTuristicos[1]) vencedor = 1; // Maior numero vence
-        else vencedor = 2;
+        printf("Carta %d - %s (%s) pontos turisticos: %d\n",2,nomeCidade[1],estado[1],numeroPontosTuristicos[1]);
+        if (numeroPontosTuristicos[0] == numeroPontosTuristicos[1]) vencedor[0] = 0;
+        else if (numeroPontosTuristicos[0] > numeroPontosTuristicos[1]) vencedor[0] = 1; // Maior numero vence
+        else vencedor[0] = 2;
+        atributoSoma[0] += (double) numeroPontosTuristicos [0];
+        atributoSoma[1] += (double) numeroPontosTuristicos [1];
         break;
     case 5:
         printf("Carta %d - %s (%s) densidade demográfica: %.2f\n",1,nomeCidade[0],estado[0],densidade[0]);
-        printf("Carta %d - %s (%s) densidade demográfica: %.2f\n\n",2,nomeCidade[1],estado[1],densidade[1]);
-        if (densidade[0] == densidade[1]) vencedor = 0;
-        else if (densidade[0] < densidade[1]) vencedor = 1; // Menor numero vence
-        else vencedor = 2;
+        printf("Carta %d - %s (%s) densidade demográfica: %.2f\n",2,nomeCidade[1],estado[1],densidade[1]);
+        if (densidade[0] == densidade[1]) vencedor[0] = 0;
+        else if (densidade[0] < densidade[1]) vencedor[0] = 1; // Menor numero vence
+        else vencedor[0] = 2;
+        atributoSoma[0] += (double) densidade[0];
+        atributoSoma[1] += (double) densidade[1];
         break;
     
     default:
@@ -232,11 +293,80 @@ int main()
         break;
     }
 
-    // Compara pib cidade index 0 com cidade index 1 
-    if(vencedor > 0)
-        printf("Resultado: Carta %d (%s) Venceu!",vencedor,nomeCidade[vencedor - 1]);
+    // Resultado vencedor
+    if(vencedor[0] > 0)
+        printf("RESULTADO: Carta %d (%s) Venceu!\n",vencedor[0],nomeCidade[vencedor[0] - 1]);
     else
-        printf("Ninguém venceu, deu EMPATE!");
+        printf("Ninguém venceu, deu EMPATE!\n");
+
+    // Como ainda não pode usar for ou while só copiei
+
+    switch (opcao[1])
+    {
+    case 1:
+        printf("Carta %d - %s (%s) população: %u\n",1,nomeCidade[0],estado[0],numeroHabitantes[0]);
+        printf("Carta %d - %s (%s) população: %u\n",2,nomeCidade[1],estado[1],numeroHabitantes[1]);
+        if (numeroHabitantes[0] == numeroHabitantes[1]) vencedor[1] = 0;
+        else if (numeroHabitantes[0] > numeroHabitantes[1]) vencedor[1] = 1; // Maior numero vence
+        else vencedor[1] = 2;
+        atributoSoma[0] += (double) numeroHabitantes[0];
+        atributoSoma[1] += (double) numeroHabitantes[1];
+        break;
+    case 2:
+        printf("Carta %d - %s (%s) Área: %.2f\n",1,nomeCidade[0],estado[0],area[0]);
+        printf("Carta %d - %s (%s) Área: %.2f\n",2,nomeCidade[1],estado[1],area[1]);
+        if (area[0] == area[1]) vencedor[1] = 0;
+        else if (area[0] > area[1]) vencedor[1] = 1; // Maior numero vence
+        else vencedor[1] = 2;
+        atributoSoma[0] += (double) area[0];
+        atributoSoma[1] += (double) area[1];
+        break;
+    case 3:
+        printf("Carta %d - %s (%s) PIB: %.2f\n",1,nomeCidade[0],estado[0],pib[0]);
+        printf("Carta %d - %s (%s) PIB: %.2f\n",2,nomeCidade[1],estado[1],pib[1]);
+        if (pib[0] == pib[1]) vencedor[1] = 0;
+        else if (pib[0] > pib[1]) vencedor[1] = 1; // Maior numero vence
+        else vencedor[1] = 2;
+        atributoSoma[0] += (double) pib[0];
+        atributoSoma[1] += (double) pib[1];
+        break;
+    case 4:
+        printf("Carta %d - %s (%s) pontos turisticos: %d\n",1,nomeCidade[0],estado[0],numeroPontosTuristicos[0]);
+        printf("Carta %d - %s (%s) pontos turisticos: %d\n",2,nomeCidade[1],estado[1],numeroPontosTuristicos[1]);
+        if (numeroPontosTuristicos[0] == numeroPontosTuristicos[1]) vencedor[1] = 0;
+        else if (numeroPontosTuristicos[0] > numeroPontosTuristicos[1]) vencedor[1] = 1; // Maior numero vence
+        else vencedor[1] = 2;
+        atributoSoma[0] += (double) numeroPontosTuristicos [0];
+        atributoSoma[1] += (double) numeroPontosTuristicos [1];
+        break;
+    case 5:
+        printf("Carta %d - %s (%s) densidade demográfica: %.2f\n",1,nomeCidade[0],estado[0],densidade[0]);
+        printf("Carta %d - %s (%s) densidade demográfica: %.2f\n",2,nomeCidade[1],estado[1],densidade[1]);
+        if (densidade[0] == densidade[1]) vencedor[1] = 0;
+        else if (densidade[0] < densidade[1]) vencedor[1] = 1; // Menor numero vence
+        else vencedor[1] = 2;
+        atributoSoma[0] += (double) densidade[0];
+        atributoSoma[1] += (double) densidade[1];
+        break;
+    
+    default:
+        printf("Opção Invalida!");
+        return 0;
+        break;
+    }
+
+    // Resultado segundo vencedor
+    if(vencedor[1] > 0)
+        printf("RESULTADO: Carta %d (%s) Venceu!\n",vencedor[1],nomeCidade[vencedor[1] - 1]);
+    else
+        printf("Ninguém venceu, deu EMPATE!\n");
+
+    printf("Soma dos atributos: Carta %d (%s) : %.2f\n",1,nomeCidade[0],atributoSoma[0]);
+    printf("Soma dos atributos: Carta %d (%s) : %.2f\n",2,nomeCidade[1],atributoSoma[1]);
+
+    if(atributoSoma[0] == atributoSoma[1]) printf("Nos atributos somandos ninguém ganhou! Deu empate!");
+    else if(atributoSoma[0] > atributoSoma[1]) printf("RESULTADO: Carta %d (%s) venceu nos atributos somandos!\n",1,nomeCidade[0]);
+    else printf("RESULTADO: Carta %d (%s) venceu nos atributos somandos!\n",2,nomeCidade[1]);
 
     return 0;
 }
